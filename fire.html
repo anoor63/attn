@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>نموذج الحضور والانصراف</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: 'Tajawal', sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
+    .container { background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+    button { width: 49%; padding: 10px; margin-top: 10px; background: #393E46; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    .status-message { margin-top: 10px; font-weight: bold; }
+    .success { color: green; }
+    .error { color: red; }
+    .warning { color: orange; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+    .modal-content { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; text-align: center; }
+    .close-btn { float: left; cursor: pointer; font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تسجيل الحضور والانصراف</h2>
+    <form id="attendanceForm">
+      <div class="form-group">
+        <label for="fullName">الاسم الرباعي</label>
+        <input type="text" id="fullName" required />
+      </div>
+      <div class="form-group">
+        <label for="employeeId">رقم الهوية</label>
+        <input type="text" id="employeeId" required pattern="\d{10}" />
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">رقم الجوال</label>
+        <input type="tel" id="phoneNumber" required pattern="05\d{8}" />
+      </div>
+      <div class="form-group">
+        <label for="location">الموقع</label>
+        <select id="location" required>
+          <option value="">اختر الموقع</option>
+          <option value="المركز 1">المركز 1</option>
+          <option value="المركز 4">المركز 4</option>
+          <option value="Home">Home</option>
+          <option value="home 2">Home 2</option>
+          <option value="مكتب أ . محمد">مكتب أ . محمد</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="shift">الوردية</label>
+        <select id="shift" required>
+          <option value="">اختر الوردية</option>
+          <option value="08:00 to 16:00">8:00 ص إلى 4:00 م</option>
+          <option value="16:00 to 00:00">4:00 م إلى 12:00 ص</option>
+          <option value="00:00 to 08:00">12:00 ص إلى 8:00 ص</option>
+        </select>
+      </div>
+      <button type="button" id="checkInBtn">تسجيل الحضور</button>
+      <button type="button" id="checkOutBtn">تسجيل الانصراف</button>
+      <div id="statusMessage" class="status-message"></div>
+    </form>
+  </div>
+
+  <div id="reminderModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <p>نذكرك بتسجيل وقت الانصراف قبل مغادرتك لضمان دقة السجلات.</p>
+      <p class="emoji">⏱ شكرًا لتعاونك الدائم 🌟</p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCspQI0Ja4mSMGNkfvBD2DG8g-Szh7Xafk",
+      authDomain: "attendance-system-24029.firebaseapp.com",
+      databaseURL: "https://attendance-system-24029-default-rtdb.firebaseio.com",
+      projectId: "attendance-system-24029",
+      storageBucket: "attendance-system-24029.firebasestorage.app",
+      messagingSenderId: "879124176259",
+      appId: "1:879124176259:web:cd3eea1a9393c63217aab6"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const checkInBtn = document.getElementById('checkInBtn');
+      const checkOutBtn = document.getElementById('checkOutBtn');
+      const statusMessage = document.getElementById('statusMessage');
+      const form = document.getElementById('attendanceForm');
+      const locationSelect = document.getElementById('location');
+      const shiftSelect = document.getElementById('shift');
+      const fullNameInput = document.getElementById('fullName');
+      const employeeIdInput = document.getElementById('employeeId');
+      const phoneNumberInput = document.getElementById('phoneNumber');
+      const reminderModal = document.getElementById('reminderModal');
+      const closeModalBtn = document.querySelector('.close-btn');
+
+      const locations = {
+        "المركز 1": { lat: 21.3814, lon: 39.8700, radius: 5 },
+        "المركز 4": { lat: 21.3822, lon: 39.8714, radius: 6 },
+        "Home": { lat: 21.3533, lon: 39.8331, radius: 100 },
+        "مكتب أ . محمد": { lat: 21.3586, lon: 39.9105, radius: 50 },
+        "home 2": { lat: 21.4848, lon: 39.2569, radius: 50 }
+      };
+
+      const getDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371e3;
+        const toRad = x => x * Math.PI / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      };
+
+      const isWithinShift = (shift, now) => {
+        const [start, end] = shift.split(' to ').map(t => t.split(':').map(Number));
+        const startDate = new Date(now); startDate.setHours(start[0], start[1]);
+        const endDate = new Date(now); endDate.setHours(end[0], end[1]);
+        if (endDate < startDate) endDate.setDate(endDate.getDate() + 1);
+        return now >= startDate && now <= endDate;
+      };
+
+      const sendDataToFirebase = async (data) => {
+        try {
+          const timestamp = new Date().toISOString();
+          await db.ref("attendance/" + timestamp).set(data);
+          statusMessage.textContent = "✅ تم حفظ البيانات بنجاح.";
+          statusMessage.className = 'status-message success';
+        } catch (error) {
+          statusMessage.textContent = "❌ فشل في الحفظ: " + error.message;
+          statusMessage.className = 'status-message error';
+        }
+      };
+
+      const showReminderModal = () => { reminderModal.style.display = 'flex'; };
+      closeModalBtn.onclick = () => { reminderModal.style.display = 'none'; };
+      window.onclick = e => { if (e.target == reminderModal) reminderModal.style.display = 'none'; };
+
+      checkInBtn.onclick = () => {
+        if (!form.checkValidity()) return form.reportValidity();
+
+        const location = locations[locationSelect.value];
+        const now = new Date();
+        const shift = shiftSelect.value;
+        if (!isWithinShift(shift, now)) {
+          statusMessage.textContent = 'اختر الوقت الصحيح لدوامك.';
+          statusMessage.className = 'status-message error';
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(pos => {
+          const distance = getDistance(pos.coords.latitude, pos.coords.longitude, location.lat, location.lon);
+          if (distance <= location.radius) {
+            const data = {
+              Action: 'تسجيل حضور',
+              Location: locationSelect.value,
+              Shift: shift,
+              FullName: fullNameInput.value,
+              EmployeeID: employeeIdInput.value,
+              PhoneNumber: phoneNumberInput.value,
+              Timestamp: now.toISOString()
+            };
+            localStorage.setItem('fullName', data.FullName);
+            localStorage.setItem('employeeId', data.EmployeeID);
+            localStorage.setItem('phoneNumber', data.PhoneNumber);
+            checkInBtn.disabled = true;
+            checkOutBtn.disabled = false;
+            showReminderModal();
+            sendDataToFirebase(data);
+          } else {
+            statusMessage.textContent = `أنت خارج النطاق المحدد (المسافة: ${Math.round(distance)} متر).`;
+            statusMessage.className = 'status-message error';
+          }
+        }, () => {
+          statusMessage.textContent = 'تعذر الوصول إلى الموقع.';
+          statusMessage.className = 'status-message error';
+        });
+      };
+
+      checkOutBtn.onclick = () => {
+        const data = {
+          Action: 'تسجيل انصراف',
+          Location: locationSelect.value,
+          Shift: shiftSelect.value,
+          FullName: fullNameInput.value,
+          EmployeeID: employeeIdInput.value,
+          PhoneNumber: phoneNumberInput.value,
+          Timestamp: new Date().toISOString()
+        };
+        statusMessage.textContent = 'تم تسجيل الانصراف. شكراً لك!';
+        statusMessage.className = 'status-message success';
+        checkOutBtn.disabled = true;
+        checkInBtn.disabled = false;
+        sendDataToFirebase(data);
+      };
+    });
+  </script>
+</body>
+</html>
