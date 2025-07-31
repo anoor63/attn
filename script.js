@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalBtn = document.querySelector('.close-btn');
 
     // ** استبدل هذا الرابط برابط Web app الذي نسخته من Google Apps Script **
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxFxVU9OjdJUYW9dij6CvmECqoeEL4MCwSE8MgHHkZnU-Zk1zv4VsrZI9lbRkLK9CqUQ/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3LazC3F1sdQTWKhXrAg2uDeX3pg2GNa_mV2Dx8jsIAGYcxunPRkQLfD7_AmCI4Ga6CQ/exec';
 
     // Store user data in localStorage
     const savedFullName = localStorage.getItem('fullName');
