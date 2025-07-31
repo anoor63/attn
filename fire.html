@@ -125,17 +125,17 @@
         return now >= startDate && now <= endDate;
       };
 
-      const sendDataToFirebase = async (data) => {
-        try {
-          const timestamp = new Date().toISOString();
-          await db.ref("attendance/" + timestamp).set(data);
-          statusMessage.textContent = "✅ تم حفظ البيانات بنجاح.";
-          statusMessage.className = 'status-message success';
-        } catch (error) {
-          statusMessage.textContent = "❌ فشل في الحفظ: " + error.message;
-          statusMessage.className = 'status-message error';
-        }
-      };
+     async function sendDataToFirebase(data) {
+  try {
+    const timestamp = Date.now(); // ✅ safe timestamp as Firebase key
+    await db.ref("attendance/" + timestamp).set(data);
+    statusMessage.textContent = "✅ تم حفظ البيانات بنجاح.";
+    statusMessage.className = 'status-message success';
+  } catch (error) {
+    statusMessage.textContent = "❌ فشل في الحفظ: " + error.message;
+    statusMessage.className = 'status-message error';
+  }
+};
 
       const showReminderModal = () => { reminderModal.style.display = 'flex'; };
       closeModalBtn.onclick = () => { reminderModal.style.display = 'none'; };
