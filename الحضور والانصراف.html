@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الحضور والانصراف</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo.png" alt="شعار الشركة" class="logo">
+            <h1 class="title">تسجيل الحضور والانصراف</h1>
+        </div>
+
+        <form id="attendanceForm">
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label for="location">الموقع:</label>
+                    <select id="location" name="location" required>
+                        <option value="">اختر الموقع</option>
+                        <option value="المركز 1">المركز 1</option>
+                        <option value="المركز 4">المركز 4</option>
+                        <option value="Home">Home</option>
+                        <option value="مكتب أ . محمد">مكتب أ . محمد</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="shift">الوردية:</label>
+                    <select id="shift" name="shift" required>
+                        <option value="">اختر الوردية</option>
+                        <option value="08:00 to 16:00">8:00 صباحاً الى 4:00 مساء</option>
+                        <option value="16:00 to 00:00">4:00 مساء الى 12:00 صباحاً</option>
+                        <option value="00:00 to 08:00">12:00 صباحاً الى 8:00 صباحاً</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName">اسم الموظف:</label>
+                <input type="text" id="fullName" name="fullName" required pattern="[\u0600-\u06FF\s]+" placeholder="الاسم الرباعي" title="الاسم يجب أن يحتوي على أحرف عربية فقط">
+            </div>
+
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label for="employeeId">رقم الهوية:</label>
+                    <input type="text" id="employeeId" name="employeeId" required pattern="\d{10}" placeholder="10 أرقام" title="رقم الهوية يجب أن يتكون من 10 أرقام فقط">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">رقم الجوال:</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required pattern="05\d{8}" placeholder="05xxxxxxxx" title="رقم الجوال يجب أن يتكون من 10 أرقام ويبدأ بـ 05">
+                </div>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <div class="buttons">
+                <button type="button" id="checkInBtn" class="btn primary">تسجيل الحضور</button>
+                <button type="button" id="checkOutBtn" class="btn secondary" disabled>تسجيل الانصراف</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="reminderModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <p>نذكرك بتسجيل وقت الانصراف قبل مغادرتك، وذلك لضمان اكتمال سجلات الحضور والانصراف بشكل دقيق.</p>
+            <p class="emoji">⏱ اهتمامك بالتسجيل يعكس التزامك. شكرًا لتعاونك الدائم 🌟</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

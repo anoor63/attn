@@ -1,0 +1,276 @@
+/*==================================
+  General Body & Typography
+====================================*/
+body {
+    background-color: #f6f3ef; /* لون خلفية من لوحة الألوان */
+    font-family: 'Tajawal', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    direction: rtl;
+    text-align: right;
+}
+
+/*==================================
+  Main Container
+====================================*/
+.container {
+    background-color: #ffffff;
+    padding: 45px;
+    border-radius: 25px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 580px;
+    box-sizing: border-box;
+}
+
+/*==================================
+  Header & Title
+====================================*/
+.header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.logo {
+    max-width: 160px;
+    height: auto;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.title {
+    color: #3A2D28; /* لون العنوان من لوحة الألوان */
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 0;
+    border-bottom: 2px solid #EBE3DB; /* لون خط فاصل من لوحة الألوان */
+    padding-bottom: 15px;
+}
+
+/*==================================
+  Form Elements
+====================================*/
+.form-group-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.form-group-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #3A2D28; /* لون نص الليبل من لوحة الألوان */
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 16px 18px;
+    border: 1px solid #D1C7BD; /* لون حدود من لوحة الألوان */
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-family: 'Tajawal', sans-serif;
+    background-color: #F1EDE6; /* لون خلفية الحقول من لوحة الألوان */
+    transition: all 0.3s ease;
+    color: #444;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #CBAD8D; /* لون الحدود عند التركيز من لوحة الألوان */
+    box-shadow: 0 0 0 3px rgba(203, 173, 141, 0.2);
+    outline: none;
+    background-color: #fff;
+}
+
+/* Placeholder styling */
+input::placeholder {
+    color: #AA8374; /* لون النص الشفاف من لوحة الألوان */
+    font-style: normal;
+    font-size: 15px;
+}
+
+/*==================================
+  Buttons
+====================================*/
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.btn {
+    padding: 18px 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Tajawal', sans-serif;
+    width: 50%;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn.primary {
+    background-color: #3A2D28; /* لون الزر الأساسي من لوحة الألوان */
+    color: white;
+}
+
+.btn.primary:hover {
+    background-color: #AA8374; /* لون Hover من لوحة الألوان */
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn.secondary {
+    background-color: #CBAD8D; /* لون الزر الثانوي من لوحة الألوان */
+    color: white;
+}
+
+.btn.secondary:hover {
+    background-color: #D1C7BD; /* لون Hover من لوحة الألوان */
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/*==================================
+  Status Messages
+====================================*/
+.status-message {
+    margin-top: 25px;
+    padding: 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    line-height: 1.6;
+}
+
+.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-color: #2e7d32;
+}
+
+.warning {
+    background-color: #fffde7;
+    color: #f9a825;
+    border-color: #f9a825;
+}
+
+.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-color: #c62828;
+}
+
+/*==================================
+  Modal & Reminder
+====================================*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    line-height: 1.8;
+}
+
+.close-btn {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.modal-content p {
+    font-size: 19px;
+    color: #333;
+    margin: 0;
+}
+
+.emoji {
+    font-size: 26px;
+    margin-top: 20px;
+    display: block;
+}
+
+/*==================================
+  Responsive Design
+====================================*/
+@media (max-width: 650px) {
+    .container {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    .form-group-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .form-group-row .form-group {
+        margin-bottom: 25px;
+    }
+    .buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .btn {
+        width: 100%;
+    }
+}
